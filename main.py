@@ -50,6 +50,8 @@ def align_mono_file(data_set, model_name):
         aligner = model.Simalign(matching_methods='a')
     elif model_name == 'simalign-itermax':
         aligner = model.Simalign(matching_methods='i')
+    elif model_name == 'spanbert':
+        aligner = model.Simalign(model='SpanBERT/spanbert-base-cased', matching_methods='a')
     elif model_name == 'eflomal':
         aligner = model.Eflomal()
     elif model_name == 'fastalign':
@@ -71,7 +73,7 @@ def align_mono_file(data_set, model_name):
     gs = test_set[2]
 
     # Word Alignment
-    aligns = aligner.align_sentences(source_sentences, target_sentences)
+    aligns = aligner.align_spans_iter(source_sentences, target_sentences)
 
     # Evaluation
     pred_num, gold_num, correct_num_p, correct_num_r, em_num = 0, 0, 0, 0, []
@@ -107,4 +109,4 @@ if __name__ == '__main__':
     # args = parser.parse_args()
     #
     # align_mono_file(args.dataset, args.model)
-    align_mono_file('arXiv', 'simalign-argmax')
+    align_mono_file('MTReference', 'simalign-argmax')

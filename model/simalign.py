@@ -3,6 +3,8 @@ import codecs
 import collections
 from typing import Dict, List, Tuple, Union
 import numpy as np
+from numpy import ndarray
+from copy import deepcopy
 from tqdm import tqdm
 from scipy.stats import entropy
 from scipy.sparse import csr_matrix
@@ -63,10 +65,10 @@ class EmbeddingLoader(object):
             with torch.no_grad():
                 if not isinstance(sent_batch[0], str):
                     inputs = self.tokenizer(sent_batch, is_split_into_words=True, padding=True, truncation=True,
-                                            return_tensors="pt", return_token_type_ids=True)
+                                            return_tensors="pt")
                 else:
                     inputs = self.tokenizer(sent_batch, is_split_into_words=False, padding=True, truncation=True,
-                                            return_tensors="pt", return_token_type_ids=True)
+                                            return_tensors="pt")
                 hidden = self.emb_model(**inputs.to(self.device))["hidden_states"]
                 if self.layer >= len(hidden):
                     raise ValueError(
@@ -83,7 +85,7 @@ class Simalign:
                  matching_methods: str = "mai", device: str = "cpu", layer: int = 8):
         model_names = {
             "bert": "bert-base-multilingual-cased",
-            "roberta": "roberta-base"
+            "spanbert": "SpanBERT/spanbert-base-cased"
         }
         all_matching_methods = {"a": "inter", "m": "mwmf", "i": "itermax", "f": "fwd", "r": "rev"}
 
@@ -126,9 +128,14 @@ class Simalign:
     def get_similarity(X: np.ndarray, Y: np.ndarray) -> np.ndarray:
         return (cosine_similarity(X, Y) + 1.0) / 2.0
 
-    # TODO: adjust to the model 'roberta'
     @staticmethod
-    def average_embeds_over_words(bpe_vectors: np.ndarray, word_tokens_pair: List[List[str]]) -> List[np.array]:
+    def get_similarity_norm(X: np.ndarray, Y: np.ndarray) -> np.ndarray:
+        data = cosine_similarity(X, Y)
+        _range = np.max(data) - np.min(data)
+        return (data - np.min(data)) / _range
+
+    @staticmethod
+    def average_embeds_over_words(bpe_vectors: List[np.ndarray], word_tokens_pair: List[List[str]]) -> List[np.array]:
         w2b_map = []
         cnt = 0
         w2b_map.append([])
@@ -161,6 +168,22 @@ class Simalign:
         return forward, backward.transpose()
 
     @staticmethod
+    def get_alignments_freq(al_matrix, src_spans, tgt_spans):
+        m, n = al_matrix.shape
+        align_count = collections.defaultdict(lambda: 0)
+        for i in range(m):
+            for j in range(n):
+                if al_matrix[i, j] > 0:
+                    # print('{}-{}'.format(src_spans[i], tgt_spans[j]))
+                    for src_id in range(len(src_spans[i])):
+                        for tgt_id in range(len(tgt_spans[j])):
+                            # if len(src_spans[i]) == 1 or len(tgt_spans[j]) == 1:
+                            align_count['{}-{}'.format(src_spans[i][src_id], tgt_spans[j][tgt_id])] += (
+                                    al_matrix[i, j] / (len(src_spans[i]) * len(tgt_spans[j])))
+
+        return align_count
+
+    @staticmethod
     def apply_distortion(sim_matrix: np.ndarray, ratio: float = 0.5) -> np.ndarray:
         shape = sim_matrix.shape
         if (shape[0] < 2 or shape[1] < 2) or ratio == 0.0:
@@ -173,13 +196,53 @@ class Simalign:
         return np.multiply(sim_matrix, distortion_mask)
 
     @staticmethod
+    def get_alignmatrix_iter(sim_matrix: np.ndarray, src_spans: List[List[int]],
+                             tgt_spans: List[List[int]]) -> ndarray:
+        m, n = sim_matrix.shape
+        alignmatrix = np.zeros((m, n))
+        # new_sim_matrix = deepcopy(sim_matrix)
+        # count = 1
+        # print(sim_matrix)
+        sim_matrix[sim_matrix < np.median(sim_matrix)] = 0.
+        while np.max(sim_matrix) > 0:
+            # while np.max(new_sim_matrix) > 0:
+            x, y = np.where(sim_matrix == np.max(sim_matrix))
+            x, y = int(x[0]), int(y[0])
+            alignmatrix[x][y] = 1.
+            # print('{}-{}\t{}'.format(src_spans[x], tgt_spans[y], sim_matrix[x][y]))
+            sim_matrix[x][y] = 0.
+
+            # mask = np.zeros((m, n))
+            for e in src_spans[x]:
+                for span_id, src_span in enumerate(src_spans):
+                    if e in src_span:
+                        # mask[span_id] = 1.
+                        # sim_matrix[span_id] *= 0.9
+                        sim_matrix[span_id] = 0.
+                        # new_sim_matrix[span_id] = 0.
+
+            for e in tgt_spans[y]:
+                for span_id, tgt_span in enumerate(tgt_spans):
+                    if e in tgt_span:
+                        # mask[:, span_id] = 1.
+                        # sim_matrix[:, span_id] *= 0.9
+                        sim_matrix[:, span_id] = 0.
+                        # new_sim_matrix[:, span_id] = 0.
+            # mask[mask == 0.] = 1.
+            # mask[mask == 1.] = 0.9
+            # sim_matrix *= mask
+        return alignmatrix
+
+    @staticmethod
     def iter_max(sim_matrix: np.ndarray, max_count: int = 2) -> np.ndarray:
         alpha_ratio = 0.9
+        # new_sim = sim_matrix
         m, n = sim_matrix.shape
         forward = np.eye(n)[sim_matrix.argmax(axis=1)]  # m x n
         backward = np.eye(m)[sim_matrix.argmax(axis=0)]  # n x m
-        inter = forward * backward.transpose()
-
+        # inter = forward * backward.transpose()
+        inter = forward * 0.5 + backward.transpose() * 0.5
+        # print(inter)
         if min(m, n) <= 2:
             return inter
 
@@ -194,15 +257,30 @@ class Simalign:
                 mask *= 0.0
                 mask_zeros *= 0.0
 
+            # for i in range(m):
+            #     for j in range(n):
+            #         if not ((i >= src_len and j < tgt_len) or (i < src_len and j >= tgt_len)):
+            #             sim_matrix[i][j] *= 0.9
+            # mask[mask == 0.45] *= 2
+            # mask[mask == 0.9] = 1.
+            # mask_zeros[mask_zeros != 0] = 1.
+
             new_sim = sim_matrix * mask
+            # print(mask)
+            # print(mask_zeros)
             fwd = np.eye(n)[new_sim.argmax(axis=1)] * mask_zeros
             bac = np.eye(m)[new_sim.argmax(axis=0)].transpose() * mask_zeros
+            # new_sim[new_sim == 1.] *= 0.5
+            # fwd = np.eye(n)[new_sim.argmax(axis=1)]
+            # bac = np.eye(m)[new_sim.argmax(axis=0)].transpose()
             new_inter = fwd * bac
+            # print(new_inter)
 
             if np.array_equal(inter + new_inter, inter):
                 break
             inter = inter + new_inter
             count += 1
+        # print(inter)
         return inter
 
     @staticmethod
@@ -238,6 +316,330 @@ class Simalign:
 
         return ents_mask
 
+    @staticmethod
+    def get_span_index(source_sentences, target_sentences, max_d=3):
+        src_spans, tgt_spans = [], []
+        for sent_id in range(len(source_sentences)):
+            src_sent_idx = list(range(len(source_sentences[sent_id].split())))
+            tgt_sent_idx = list(range(len(target_sentences[sent_id].split())))
+            src_span_idx, tgt_span_idx = [], []
+            for d in range(1, max_d + 1):
+                src_span_idx.extend(
+                    [src_sent_idx[i: i + d] for i in range(0, len(src_sent_idx)) if i + d <= len(src_sent_idx)])
+                tgt_span_idx.extend(
+                    [tgt_sent_idx[i: i + d] for i in range(0, len(tgt_sent_idx)) if i + d <= len(tgt_sent_idx)])
+            src_spans.append(src_span_idx)
+            tgt_spans.append(tgt_span_idx)
+        return src_spans, tgt_spans
+
+    @staticmethod
+    def get_bpe_index(bpe_map, src_idx, tgt_idx, reverse=False):
+        spans_pair = []
+        for sent_id in range(len(bpe_map)):
+            src_spans, tgt_spans = [], []
+            if not reverse:
+                for src in src_idx[sent_id]:
+                    if (src[-1] + 1) in bpe_map[sent_id][0]:
+                        src_spans.append(
+                            list(range(bpe_map[sent_id][0].index(src[0]), bpe_map[sent_id][0].index(src[-1] + 1))))
+                    else:
+                        src_spans.append(list(range(bpe_map[sent_id][0].index(src[0]), len(bpe_map[sent_id][0]))))
+                for tgt in tgt_idx[sent_id]:
+                    if (tgt[-1] + 1) in bpe_map[sent_id][1]:
+                        tgt_spans.append(
+                            list(range(bpe_map[sent_id][1].index(tgt[0]), bpe_map[sent_id][1].index(tgt[-1] + 1))))
+                    else:
+                        tgt_spans.append(list(range(bpe_map[sent_id][1].index(tgt[0]), len(bpe_map[sent_id][1]))))
+            else:
+                for src in src_idx[sent_id]:
+                    if (src[-1] + 1) in bpe_map[sent_id][1]:
+                        src_spans.append(
+                            list(range(bpe_map[sent_id][1].index(src[0]), bpe_map[sent_id][1].index(src[-1] + 1))))
+                    else:
+                        src_spans.append(list(range(bpe_map[sent_id][1].index(src[0]), len(bpe_map[sent_id][1]))))
+                for tgt in tgt_idx[sent_id]:
+                    if (tgt[-1] + 1) in bpe_map[sent_id][0]:
+                        tgt_spans.append(
+                            list(range(bpe_map[sent_id][0].index(tgt[0]), bpe_map[sent_id][0].index(tgt[-1] + 1))))
+                    else:
+                        tgt_spans.append(list(range(bpe_map[sent_id][0].index(tgt[0]), len(bpe_map[sent_id][0]))))
+            spans_pair.append([src_spans, tgt_spans])
+        return spans_pair
+
+    @staticmethod
+    def average_embeds_over_spans(bpe_vectors, span_tokens_pair):
+        w2b_map = span_tokens_pair
+
+        new_vectors = []
+        for l_id in range(2):
+            span_vector = []
+            for span_set in w2b_map[l_id]:
+                span_vector.append(bpe_vectors[l_id][span_set].mean(0))
+            new_vectors.append(np.array(span_vector))
+        return new_vectors
+
+    def align_spans_iter(self, source_sentences, target_sentences, batch_size=100):
+        device = torch.device(self.device)
+
+        words_tokens = []
+        for sent_id in range(len(source_sentences)):
+            l1_tokens = [self.embed_loader.tokenizer.tokenize(word) for word in source_sentences[sent_id].split()]
+            l2_tokens = [self.embed_loader.tokenizer.tokenize(word) for word in target_sentences[sent_id].split()]
+            words_tokens.append([l1_tokens, l2_tokens])
+
+        sentences_bpe_lists = []
+        sentences_b2w_map = []
+        for sent_id in range(len(words_tokens)):
+            sent_pair = [[bpe for w in sent for bpe in w] for sent in words_tokens[sent_id]]
+            b2w_map_pair = [[i for i, w in enumerate(sent) for _ in w] for sent in words_tokens[sent_id]]
+            sentences_bpe_lists.append(sent_pair)
+            sentences_b2w_map.append(b2w_map_pair)
+
+        # Get all possible spans (len <= 3)
+        source_spans, target_spans = self.get_span_index(source_sentences, target_sentences)
+        spans_pair_bpe = self.get_bpe_index(sentences_b2w_map, source_spans, target_spans)
+
+        ds = [(idx, source_sentences[idx], target_sentences[idx]) for idx in range(len(source_sentences))]
+        data_loader = torch.utils.data.DataLoader(ds, batch_size=batch_size, shuffle=False)
+        aligns = []
+        for batch_id, batch_sentences in enumerate(tqdm(data_loader)):
+            batch_sentences[1], batch_sentences[2] = list(batch_sentences[1]), list(batch_sentences[2])
+            batch_vectors_src = self.embed_loader.get_embed_list(batch_sentences[1])
+            batch_vectors_tgt = self.embed_loader.get_embed_list(batch_sentences[2])
+            # Normalization
+            batch_vectors_src = F.normalize(batch_vectors_src, dim=2)
+            batch_vectors_tgt = F.normalize(batch_vectors_tgt, dim=2)
+
+            batch_vectors_src = batch_vectors_src.cpu().detach().numpy()
+            batch_vectors_tgt = batch_vectors_tgt.cpu().detach().numpy()
+
+            for in_batch_id, sent_id in enumerate(batch_sentences[0].numpy()):
+                sent_pair = sentences_bpe_lists[sent_id]
+                vectors = [batch_vectors_src[in_batch_id, :len(sent_pair[0])],
+                           batch_vectors_tgt[in_batch_id, :len(sent_pair[1])]]
+                vectors = self.average_embeds_over_spans(vectors, spans_pair_bpe[sent_id])
+                sim = self.get_similarity_norm(vectors[0], vectors[1])
+
+                # forward, reverse = self.get_alignment_matrix(sim)
+                # alignment_matrix = forward * reverse
+                # alignment_matrix = self.iter_max(src_len, tgt_len, sim)
+
+                # mask the m:n cases
+                # src_len, tgt_len = len(source_sentences[sent_id].split()), len(target_sentences[sent_id].split())
+                # for i in range(len(vectors[0])):
+                #     for j in range(len(vectors[1])):
+                #         if i >= src_len and j >= tgt_len:
+                #             sim[i][j] *= 0.
+                alignment_matrix = self.get_alignmatrix_iter(sim, source_spans[sent_id], target_spans[sent_id])
+                span_scores = collections.defaultdict(lambda: [])
+                for i in range(len(vectors[0])):
+                    for j in range(len(vectors[1])):
+                        if alignment_matrix[i, j] > 0:
+                            # print('{} - {}'.format(source_spans[sent_id][i], target_spans[sent_id][j]))
+
+                            for x in source_spans[sent_id][i]:
+                                for y in target_spans[sent_id][j]:
+                                    # if len(source_spans[sent_id][i]) == len((target_spans[sent_id][j])):
+                                    #     span_scores['{}-{}'.format(x, y)].append(sim[i, j])
+                                    span_scores['{}-{}'.format(x, y)].append(sim[i, j])
+                # aligns.append(' '.join(sorted([F"{p}" for p, vals in span_scores.items() if vals >= 1.0], key=lambda x: (int(x.split('-')[0]), int(x.split('-')[1])))))
+                # print(span_scores)
+                aligns.append(' '.join(sorted([F"{p}" for p, vals in span_scores.items()],
+                                              key=lambda x: (int(x.split('-')[0]), int(x.split('-')[1])))))
+
+        return aligns
+
+    def align_spans_freq(self, source_sentences, target_sentences, batch_size=100):
+        device = torch.device(self.device)
+
+        words_tokens = []
+        for sent_id in range(len(source_sentences)):
+            l1_tokens = [self.embed_loader.tokenizer.tokenize(word) for word in source_sentences[sent_id].split()]
+            l2_tokens = [self.embed_loader.tokenizer.tokenize(word) for word in target_sentences[sent_id].split()]
+            words_tokens.append([l1_tokens, l2_tokens])
+
+        sentences_bpe_lists = []
+        sentences_b2w_map = []
+        for sent_id in range(len(words_tokens)):
+            sent_pair = [[bpe for w in sent for bpe in w] for sent in words_tokens[sent_id]]
+            b2w_map_pair = [[i for i, w in enumerate(sent) for _ in w] for sent in words_tokens[sent_id]]
+            sentences_bpe_lists.append(sent_pair)
+            sentences_b2w_map.append(b2w_map_pair)
+
+        # Get all possible spans (len <= 3)
+        source_spans, target_spans = self.get_span_index(source_sentences, target_sentences)
+        spans_pair_bpe = self.get_bpe_index(sentences_b2w_map, source_spans, target_spans)
+
+        ds = [(idx, source_sentences[idx], target_sentences[idx]) for idx in range(len(source_sentences))]
+        data_loader = torch.utils.data.DataLoader(ds, batch_size=batch_size, shuffle=False)
+        aligns = []
+        for batch_id, batch_sentences in enumerate(tqdm(data_loader)):
+            batch_sentences[1], batch_sentences[2] = list(batch_sentences[1]), list(batch_sentences[2])
+            batch_vectors_src = self.embed_loader.get_embed_list(batch_sentences[1])
+            batch_vectors_tgt = self.embed_loader.get_embed_list(batch_sentences[2])
+            # Normalization
+            batch_vectors_src = F.normalize(batch_vectors_src, dim=2)
+            batch_vectors_tgt = F.normalize(batch_vectors_tgt, dim=2)
+
+            batch_vectors_src = batch_vectors_src.cpu().detach().numpy()
+            batch_vectors_tgt = batch_vectors_tgt.cpu().detach().numpy()
+
+            for in_batch_id, sent_id in enumerate(batch_sentences[0].numpy()):
+                sent_pair = sentences_bpe_lists[sent_id]
+                vectors = [batch_vectors_src[in_batch_id, :len(sent_pair[0])],
+                           batch_vectors_tgt[in_batch_id, :len(sent_pair[1])]]
+                vectors = self.average_embeds_over_spans(vectors, spans_pair_bpe[sent_id])
+                sim = self.get_similarity(vectors[0], vectors[1])
+                src_len, tgt_len = len(source_sentences[sent_id].split()), len(target_sentences[sent_id].split())
+                # for i in range(len(vectors[0])):
+                #     for j in range(len(vectors[1])):
+                #         if not ((i >= src_len and j < tgt_len) or (i < src_len and j >= tgt_len)):
+                #             sim[i][j] *= 0.9
+                # print(sim)
+                # for i in range(len(vectors[0])):
+                #     for j in range(len(vectors[1])):
+                #         if not (i < src_len and j < tgt_len):
+                #         # if (len(source_spans[sent_id][i]) == 2 and len(target_spans[sent_id][j]) == 3) or (
+                #         #         len(source_spans[sent_id][i]) == 3 and len(target_spans[sent_id][j]) == 2):
+                #             sim[i][j] *= 0.9
+                forward, reverse = self.get_alignment_matrix(sim)
+                # alignment_matrix = forward * reverse
+                # alignment_matrix = self.iter_max(src_len, tgt_len, sim)
+                alignment_matrix = forward * 0.5 + reverse * 0.5
+
+                # print(alignment_matrix)
+
+                span_scores = self.get_alignments_freq(alignment_matrix, source_spans[sent_id], target_spans[sent_id])
+
+                # span_scores = collections.defaultdict(lambda: [])
+                # for i in range(len(vectors[0])):
+                #     for j in range(len(vectors[1])):
+                #         # if forward[i, j] > 0:
+                #         #     print('forward {} - {}'.format(source_spans[sent_id][i], target_spans[sent_id][j]))
+                #         # if reverse[i, j] > 0:
+                #         #     print('reverse {} - {}'.format(source_spans[sent_id][i], target_spans[sent_id][j]))
+                #         if alignment_matrix[i, j] > 0:
+                #             # print('{} - {}'.format(source_spans[sent_id][i], target_spans[sent_id][j]))
+                #             if len(source_spans[sent_id][i]) == 1 or len(target_spans[sent_id][j]) == 1:
+                #                 for x in source_spans[sent_id][i]:
+                #                     for y in target_spans[sent_id][j]:
+                #                         span_scores['{}-{}'.format(x, y)].append(sim[i, j])
+                aligns.append(' '.join(sorted([F"{p}" for p, vals in span_scores.items() if vals >= 1.0],
+                                              key=lambda x: (int(x.split('-')[0]), int(x.split('-')[1])))))
+                # print(span_scores)
+                # aligns.append(' '.join(sorted([F"{p}" for p, vals in span_scores.items()])))
+
+        return aligns
+
+    def align_spans_bidirection(self, source_sentences, target_sentences, batch_size=100):
+        device = torch.device(self.device)
+
+        words_tokens = []
+        for sent_id in range(len(source_sentences)):
+            l1_tokens = [self.embed_loader.tokenizer.tokenize(word) for word in source_sentences[sent_id].split()]
+            l2_tokens = [self.embed_loader.tokenizer.tokenize(word) for word in target_sentences[sent_id].split()]
+            words_tokens.append([l1_tokens, l2_tokens])
+
+        sentences_bpe_lists = []
+        sentences_b2w_map = []
+        for sent_id in range(len(words_tokens)):
+            sent_pair = [[bpe for w in sent for bpe in w] for sent in words_tokens[sent_id]]
+            b2w_map_pair = [[i for i, w in enumerate(sent) for _ in w] for sent in words_tokens[sent_id]]
+            sentences_bpe_lists.append(sent_pair)
+            sentences_b2w_map.append(b2w_map_pair)
+
+        # Get all possible spans
+        source_spans, target_spans = self.get_span_index(source_sentences, target_sentences)
+        source_words, target_words = [], []
+        for src_sent, tgt_sent in zip(source_spans, target_spans):
+            src_words, tgt_words = [], []
+            src_words.extend([span for span in src_sent if len(span) == 1])
+            tgt_words.extend([span for span in tgt_sent if len(span) == 1])
+            source_words.append(src_words)
+            target_words.append(tgt_words)
+
+        s2t_spans_pair_bpe = self.get_bpe_index(sentences_b2w_map, source_spans, target_words)
+        t2s_spans_pair_bpe = self.get_bpe_index(sentences_b2w_map, target_spans, source_words, True)
+
+        # alignments = []
+        s2t_aligns, t2s_aligns = [], []
+        for spans_pair_bpe in [s2t_spans_pair_bpe, t2s_spans_pair_bpe]:
+            ds = [(idx, source_sentences[idx], target_sentences[idx]) for idx in range(len(source_sentences))]
+            data_loader = torch.utils.data.DataLoader(ds, batch_size=batch_size, shuffle=False)
+            # aligns = []
+            for batch_id, batch_sentences in enumerate(tqdm(data_loader)):
+                batch_sentences[1], batch_sentences[2] = list(batch_sentences[1]), list(batch_sentences[2])
+                batch_vectors_src = self.embed_loader.get_embed_list(batch_sentences[1])
+                batch_vectors_tgt = self.embed_loader.get_embed_list(batch_sentences[2])
+                # Normalization
+                batch_vectors_src = F.normalize(batch_vectors_src, dim=2)
+                batch_vectors_tgt = F.normalize(batch_vectors_tgt, dim=2)
+
+                batch_vectors_src = batch_vectors_src.cpu().detach().numpy()
+                batch_vectors_tgt = batch_vectors_tgt.cpu().detach().numpy()
+
+                for in_batch_id, sent_id in enumerate(batch_sentences[0].numpy()):
+                    sent_pair = sentences_bpe_lists[sent_id]
+                    if spans_pair_bpe == t2s_spans_pair_bpe:
+                        vectors = [batch_vectors_tgt[in_batch_id, :len(sent_pair[1])],
+                                   batch_vectors_src[in_batch_id, :len(sent_pair[0])]]
+                        row, column = target_spans, source_words
+                    else:
+                        vectors = [batch_vectors_src[in_batch_id, :len(sent_pair[0])],
+                                   batch_vectors_tgt[in_batch_id, :len(sent_pair[1])]]
+                        row, column = source_spans, target_words
+                    vectors = self.average_embeds_over_spans(vectors, spans_pair_bpe[sent_id])
+                    sim = self.get_similarity(vectors[0], vectors[1])
+
+                    # src_len, tgt_len = len(source_sentences[sent_id].split()), len(target_sentences[sent_id].split())
+                    # for i in range(len(vectors[0])):
+                    #     for j in range(len(vectors[1])):
+                    #         if not (i < src_len and j < tgt_len):
+                    #         # if (len(source_spans[sent_id][i]) == 2 and len(target_spans[sent_id][j]) == 3) or (
+                    #         #         len(source_spans[sent_id][i]) == 3 and len(target_spans[sent_id][j]) == 2):
+                    #             sim[i][j] *= 0.9
+
+                    forward, reverse = self.get_alignment_matrix(sim)
+                    alignment_matrix = reverse
+                    # alignment_matrix = self.get_alignmatrix_iter(sim, row[sent_id], column[sent_id])
+                    # alignment_matrix = self.iter_max(sim)
+                    # print(alignment_matrix)
+                    # alignment_matrix = forward * 0.5 + reverse * 0.5
+                    # print(alignment_matrix)
+                    span_scores = collections.defaultdict(lambda: [])
+                    # span_scores = collections.defaultdict(lambda: 0)
+                    for i in range(len(vectors[0])):
+                        for j in range(len(vectors[1])):
+                            if alignment_matrix[i, j] > 0:
+
+                                # if spans_pair_bpe == t2s_spans_pair_bpe:
+                                #     print('{} - {}'.format(column[sent_id][j], row[sent_id][i]))
+                                # else:
+                                #     print('{} - {}'.format(row[sent_id][i], column[sent_id][j]))
+
+                                for x in row[sent_id][i]:
+                                    for y in column[sent_id][j]:
+                                        if spans_pair_bpe == t2s_spans_pair_bpe:
+                                            span_scores['{}-{}'.format(y, x)].append(sim[i, j])
+                                            # span_scores['{}-{}'.format(y, x)] += (alignment_matrix[i, j] / (len(row[sent_id][i]) * len(column[sent_id][j])))
+                                        else:
+                                            span_scores['{}-{}'.format(x, y)].append(sim[i, j])
+                                            # span_scores['{}-{}'.format(x, y)] += (alignment_matrix[i, j] / (len(row[sent_id][i]) * len(column[sent_id][j])))
+                    # aligns.append(' '.join(sorted([F"{p}" for p, vals in span_scores.items() if vals >= 1.0])))
+                    # print(span_scores)
+                    if spans_pair_bpe == t2s_spans_pair_bpe:
+                        # alignments[sent_id] += (' ' + ' '.join(sorted([F"{p}" for p, vals in span_scores.items()])))
+                        t2s_aligns.append(' '.join(sorted([F"{p}" for p, vals in span_scores.items()])))
+                    else:
+                        # alignments.append(' '.join(sorted([F"{p}" for p, vals in span_scores.items() if vals])))
+                        s2t_aligns.append(' '.join(sorted([F"{p}" for p, vals in span_scores.items()])))
+                    # print(alignments)
+        aligns = [' '.join(sorted([i for i in s2t_aligns[sent_id].split() if i in t2s_aligns[sent_id].split()],
+                                  key=lambda x: (int(x.split('-')[0]), int(x.split('-')[1])))) for sent_id in
+                  range(len(s2t_aligns))]
+        # aligns = [' '.join(sorted(list(set(alignments[i].split())), key=lambda x: (int(x.split('-')[0]), int(x.split('-')[1])))) for i in range(len(alignments))]
+        return aligns
+
     def align_sentences(self, source_sentences, target_sentences, batch_size=100):
         convert_to_words = (self.token_type == "word")
         device = torch.device(self.device)
@@ -262,6 +664,7 @@ class Simalign:
         data_loader = torch.utils.data.DataLoader(ds, batch_size=batch_size, shuffle=False)
         aligns = []
         for batch_id, batch_sentences in enumerate(tqdm(data_loader)):
+            batch_sentences[1], batch_sentences[2] = list(batch_sentences[1]), list(batch_sentences[2])
             batch_vectors_src = self.embed_loader.get_embed_list(batch_sentences[1])
             batch_vectors_trg = self.embed_loader.get_embed_list(batch_sentences[2])
             btach_sim = None

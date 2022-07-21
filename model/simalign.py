@@ -200,10 +200,8 @@ class Simalign:
                              tgt_spans: List[List[int]]) -> ndarray:
         m, n = sim_matrix.shape
         alignmatrix = np.zeros((m, n))
-        # new_sim_matrix = deepcopy(sim_matrix)
-        # count = 1
         # print(sim_matrix)
-        sim_matrix[sim_matrix < np.median(sim_matrix)] = 0.
+        # sim_matrix[sim_matrix < np.median(sim_matrix)] = 0.
         while np.max(sim_matrix) > 0:
             # while np.max(new_sim_matrix) > 0:
             x, y = np.where(sim_matrix == np.max(sim_matrix))
@@ -212,25 +210,15 @@ class Simalign:
             # print('{}-{}\t{}'.format(src_spans[x], tgt_spans[y], sim_matrix[x][y]))
             sim_matrix[x][y] = 0.
 
-            # mask = np.zeros((m, n))
             for e in src_spans[x]:
                 for span_id, src_span in enumerate(src_spans):
                     if e in src_span:
-                        # mask[span_id] = 1.
-                        # sim_matrix[span_id] *= 0.9
                         sim_matrix[span_id] = 0.
-                        # new_sim_matrix[span_id] = 0.
 
             for e in tgt_spans[y]:
                 for span_id, tgt_span in enumerate(tgt_spans):
                     if e in tgt_span:
-                        # mask[:, span_id] = 1.
-                        # sim_matrix[:, span_id] *= 0.9
                         sim_matrix[:, span_id] = 0.
-                        # new_sim_matrix[:, span_id] = 0.
-            # mask[mask == 0.] = 1.
-            # mask[mask == 1.] = 0.9
-            # sim_matrix *= mask
         return alignmatrix
 
     @staticmethod

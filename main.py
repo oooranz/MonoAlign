@@ -52,10 +52,6 @@ def align_mono_file(data_set, model_name):
         aligner = model.Simalign(matching_methods='i')
     elif model_name == 'spanbert':
         aligner = model.Simalign(model='SpanBERT/spanbert-base-cased', matching_methods='a')
-    elif model_name == 'eflomal':
-        aligner = model.Eflomal()
-    elif model_name == 'fastalign':
-        aligner = model.Fastalign()
 
     # Dataset
     if data_set == 'MTReference':
@@ -103,10 +99,10 @@ def align_mono_file(data_set, model_name):
 
 
 if __name__ == '__main__':
-    # parser = argparse.ArgumentParser()
-    # parser.add_argument('-dataset', type=str, required=True)
-    # parser.add_argument('-model', type=str, required=True)
-    # args = parser.parse_args()
-    #
-    # align_mono_file(args.dataset, args.model)
-    align_mono_file('MTReference', 'simalign-argmax')
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-dataset', type=str, required=True)
+    parser.add_argument('-model', type=str, required=True)
+    args = parser.parse_args()
+
+    align_mono_file(args.dataset, args.model)
+    # align_mono_file('Newsela', 'simalign-argmax')

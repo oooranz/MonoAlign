@@ -1,6 +1,8 @@
 import regex
 import codecs
 import collections
+import pandas as pd
+import itertools
 from typing import Dict, List, Tuple, Union
 import numpy as np
 from numpy import ndarray
@@ -27,7 +29,9 @@ LOG = get_logger(__name__)
 
 
 class EmbeddingLoader(object):
-    def __init__(self, model: str = "bert-base-multilingual-cased", device=torch.device('cpu'), layer: int = 8):
+    def __init__(self, model: str = "bert-base-multilingual-cased",
+                 device=torch.device('mps:0') if torch.backends.mps.is_available() else torch.device('cpu'),
+                 layer: int = 8):
         TR_Models = {
             'bert-base-uncased': (BertModel, BertTokenizer),
             'bert-base-multilingual-cased': (BertModel, BertTokenizer),
@@ -82,7 +86,8 @@ class EmbeddingLoader(object):
 class Simalign:
     def __init__(self, model: str = "bert", token_type: str = "bpe", distortion: float = 0.0,
                  null_align: float = 1.0,
-                 matching_methods: str = "mai", device: str = "cpu", layer: int = 8):
+                 matching_methods: str = "mai", device: str = "mps:0" if torch.backends.mps.is_available() else "cpu",
+                 layer: int = 8):
         model_names = {
             "bert": "bert-base-multilingual-cased",
             "spanbert": "SpanBERT/spanbert-base-cased"
@@ -101,8 +106,8 @@ class Simalign:
         self.embed_loader = EmbeddingLoader(model=self.model, device=self.device, layer=layer)
 
         LOG.info(
-            "Simalign parameters: model=%s; token_type=%s; distortion=%s; null_align=%s; matching_methods=%s; device=%s" % (
-                model, token_type, distortion, null_align, matching_methods, device))
+            "Simalign parameters: model=%s; token_type=%s; matching_methods=%s; device=%s" % (
+                model, token_type, matching_methods, device))
 
     @staticmethod
     def get_max_weight_match(sim: np.ndarray) -> np.ndarray:
@@ -130,9 +135,16 @@ class Simalign:
 
     @staticmethod
     def get_similarity_norm(X: np.ndarray, Y: np.ndarray) -> np.ndarray:
-        data = cosine_similarity(X, Y)
-        _range = np.max(data) - np.min(data)
-        return (data - np.min(data)) / _range
+        data = (cosine_similarity(X, Y) + 1.0) / 2.0
+
+        # Normalization
+        # _range = np.max(data) - np.min(data)
+        # sim_matrix = (data - np.min(data)) / _range
+
+        sim_matrix = data
+        sim_matrix[sim_matrix < np.median(sim_matrix)] = 0.
+        # sim_matrix[sim_matrix < np.quantile(sim_matrix, 0.75)] = 0.
+        return sim_matrix
 
     @staticmethod
     def average_embeds_over_words(bpe_vectors: List[np.ndarray], word_tokens_pair: List[List[str]]) -> List[np.array]:
@@ -196,12 +208,11 @@ class Simalign:
         return np.multiply(sim_matrix, distortion_mask)
 
     @staticmethod
-    def get_alignmatrix_iter(sim_matrix: np.ndarray, src_spans: List[List[int]],
-                             tgt_spans: List[List[int]]) -> ndarray:
+    def get_alignmatrix_greedy(sim_matrix: np.ndarray, src_spans: List[List[int]],
+                               tgt_spans: List[List[int]]) -> ndarray:
         m, n = sim_matrix.shape
         alignmatrix = np.zeros((m, n))
         # print(sim_matrix)
-        # sim_matrix[sim_matrix < np.median(sim_matrix)] = 0.
         while np.max(sim_matrix) > 0:
             # while np.max(new_sim_matrix) > 0:
             x, y = np.where(sim_matrix == np.max(sim_matrix))
@@ -222,15 +233,68 @@ class Simalign:
         return alignmatrix
 
     @staticmethod
+    def get_combs(src_spans, tgt_spans, df):
+        def get_span_dict(spans):
+            span_dict = {}
+            for span in spans:
+                if len(span) == 1:
+                    span_dict[span[0]] = list(filter(lambda x: span[0] in x, spans))
+            return span_dict
+
+        def deduplicate(mylist):
+            new_list = []
+            for i in mylist:
+                if i not in new_list:
+                    new_list.append(i)
+            return new_list
+
+        def get_product(pools):
+            result = [[]]
+            for pool in pools:
+                if result == [[]]:
+                    result = [x + [y] for x in result for y in pool]
+                else:
+                    result = [x + [y] for x in result for y in pool if not set(y) & set(x[-1]) or y == x[-1]]
+            return [deduplicate(i) for i in result]
+
+        if df.empty:
+            return None
+
+        src_span_dict, tgt_span_dict = get_span_dict(src_spans), get_span_dict(tgt_spans)
+        if src_span_dict == {} or tgt_span_dict == {}:
+            return None
+
+        prod_src, prod_tgt = get_product(src_span_dict.values()), get_product(tgt_span_dict.values())
+        combinations = collections.defaultdict(lambda: [])
+        for src in prod_src:
+            for tgt in prod_tgt:
+                if len(src) == len(tgt):
+                    sub_df = df.loc[[str(i) for i in src], [str(i) for i in tgt]]
+                    sub_nd = sub_df.values
+                    # Get the argmax result of the submatrix
+                    m, n = sub_nd.shape
+                    fwd = np.eye(n)[sub_nd.argmax(axis=1)]
+                    bwd = np.eye(m)[sub_nd.argmax(axis=0)]
+                    argmax_nd = (fwd * bwd.transpose()) * sub_nd
+                    combinations[np.mean(np.max(argmax_nd, axis=1))].extend(
+                        [(src[i], tgt[j]) for i, j in zip(np.where(argmax_nd > 0)[0], np.where(argmax_nd > 0)[1])])
+                else:
+                    continue
+        if combinations:
+            # for c in sorted(combinations.keys(), reverse=True):
+            #     print(combinations[c], c)
+            return combinations[sorted(combinations.keys())[-1]]
+        else:
+            return None
+
+    @staticmethod
     def iter_max(sim_matrix: np.ndarray, max_count: int = 2) -> np.ndarray:
         alpha_ratio = 0.9
-        # new_sim = sim_matrix
         m, n = sim_matrix.shape
         forward = np.eye(n)[sim_matrix.argmax(axis=1)]  # m x n
         backward = np.eye(m)[sim_matrix.argmax(axis=0)]  # n x m
-        # inter = forward * backward.transpose()
-        inter = forward * 0.5 + backward.transpose() * 0.5
-        # print(inter)
+        inter = forward * backward.transpose()
+
         if min(m, n) <= 2:
             return inter
 
@@ -245,30 +309,15 @@ class Simalign:
                 mask *= 0.0
                 mask_zeros *= 0.0
 
-            # for i in range(m):
-            #     for j in range(n):
-            #         if not ((i >= src_len and j < tgt_len) or (i < src_len and j >= tgt_len)):
-            #             sim_matrix[i][j] *= 0.9
-            # mask[mask == 0.45] *= 2
-            # mask[mask == 0.9] = 1.
-            # mask_zeros[mask_zeros != 0] = 1.
-
             new_sim = sim_matrix * mask
-            # print(mask)
-            # print(mask_zeros)
             fwd = np.eye(n)[new_sim.argmax(axis=1)] * mask_zeros
             bac = np.eye(m)[new_sim.argmax(axis=0)].transpose() * mask_zeros
-            # new_sim[new_sim == 1.] *= 0.5
-            # fwd = np.eye(n)[new_sim.argmax(axis=1)]
-            # bac = np.eye(m)[new_sim.argmax(axis=0)].transpose()
             new_inter = fwd * bac
-            # print(new_inter)
 
             if np.array_equal(inter + new_inter, inter):
                 break
             inter = inter + new_inter
             count += 1
-        # print(inter)
         return inter
 
     @staticmethod
@@ -305,11 +354,12 @@ class Simalign:
         return ents_mask
 
     @staticmethod
-    def get_span_index(source_sentences, target_sentences, max_d=3):
+    def get_span_index(src_sents: List[str], tgt_sents: List[str],
+                       max_d: int = 3) -> Tuple[List[List[list]], List[List[list]]]:
         src_spans, tgt_spans = [], []
-        for sent_id in range(len(source_sentences)):
-            src_sent_idx = list(range(len(source_sentences[sent_id].split())))
-            tgt_sent_idx = list(range(len(target_sentences[sent_id].split())))
+        for sent_id in range(len(src_sents)):
+            src_sent_idx = list(range(len(src_sents[sent_id].split())))
+            tgt_sent_idx = list(range(len(tgt_sents[sent_id].split())))
             src_span_idx, tgt_span_idx = [], []
             for d in range(1, max_d + 1):
                 src_span_idx.extend(
@@ -321,7 +371,8 @@ class Simalign:
         return src_spans, tgt_spans
 
     @staticmethod
-    def get_bpe_index(bpe_map, src_idx, tgt_idx, reverse=False):
+    def get_bpe_index(bpe_map: List[List[List[int]]], src_idx: List[List[list]], tgt_idx: List[List[list]],
+                      reverse=False) -> List[List[List[list]]]:
         spans_pair = []
         for sent_id in range(len(bpe_map)):
             src_spans, tgt_spans = [], []
@@ -355,7 +406,8 @@ class Simalign:
         return spans_pair
 
     @staticmethod
-    def average_embeds_over_spans(bpe_vectors, span_tokens_pair):
+    def average_embeds_over_spans(bpe_vectors: List[np.ndarray],
+                                  span_tokens_pair: Union[List[List[list]], List[List[List[list]]]]) -> List[np.array]:
         w2b_map = span_tokens_pair
 
         new_vectors = []
@@ -405,36 +457,70 @@ class Simalign:
                 sent_pair = sentences_bpe_lists[sent_id]
                 vectors = [batch_vectors_src[in_batch_id, :len(sent_pair[0])],
                            batch_vectors_tgt[in_batch_id, :len(sent_pair[1])]]
+                src_len, tgt_len = len(source_sentences[sent_id].split()), len(target_sentences[sent_id].split())
+                src_spans, tgt_spans = source_spans[sent_id], target_spans[sent_id]
                 vectors = self.average_embeds_over_spans(vectors, spans_pair_bpe[sent_id])
-                sim = self.get_similarity_norm(vectors[0], vectors[1])
+                sim = self.get_similarity_norm(vectors[0], vectors[1])  # 1/x n*m -> n*m
+                sim_df = pd.DataFrame(sim, index=[str(i) for i in src_spans],
+                                      columns=[str(i) for i in tgt_spans])
+                # print(sim_df)
 
-                # forward, reverse = self.get_alignment_matrix(sim)
-                # alignment_matrix = forward * reverse
-                # alignment_matrix = self.iter_max(src_len, tgt_len, sim)
-
-                # mask the m:n cases
-                # src_len, tgt_len = len(source_sentences[sent_id].split()), len(target_sentences[sent_id].split())
-                # for i in range(len(vectors[0])):
-                #     for j in range(len(vectors[1])):
-                #         if i >= src_len and j >= tgt_len:
-                #             sim[i][j] *= 0.
-                alignment_matrix = self.get_alignmatrix_iter(sim, source_spans[sent_id], target_spans[sent_id])
+                # Baseline1: Greedy method
+                alignment_matrix = self.get_alignmatrix_greedy(sim, src_spans, tgt_spans)
                 span_scores = collections.defaultdict(lambda: [])
                 for i in range(len(vectors[0])):
                     for j in range(len(vectors[1])):
-                        if alignment_matrix[i, j] > 0:
-                            # print('{} - {}'.format(source_spans[sent_id][i], target_spans[sent_id][j]))
-
+                        if alignment_matrix[i, j] > 0.:
                             for x in source_spans[sent_id][i]:
                                 for y in target_spans[sent_id][j]:
-                                    # if len(source_spans[sent_id][i]) == len((target_spans[sent_id][j])):
-                                    #     span_scores['{}-{}'.format(x, y)].append(sim[i, j])
                                     span_scores['{}-{}'.format(x, y)].append(sim[i, j])
-                # aligns.append(' '.join(sorted([F"{p}" for p, vals in span_scores.items() if vals >= 1.0], key=lambda x: (int(x.split('-')[0]), int(x.split('-')[1])))))
-                # print(span_scores)
+
+                # # Baseline2: Cover the words as much as possible
+                # forward, reverse = self.get_alignment_matrix(sim)
+                # alignment_matrix = forward * reverse
+                # span_scores = collections.defaultdict(lambda: [])
+                # index_s, column_s, src_id, tgt_id = set(), set(), set(), set()
+                # for i in range(src_len):
+                #     for j in range(tgt_len):
+                #         if alignment_matrix[i, j] > 0.:
+                #             src_spans = list(filter(lambda x: i not in x, src_spans))
+                #             tgt_spans = list(filter(lambda x: j not in x, tgt_spans))
+                #
+                #             for src_span in source_spans[sent_id]:
+                #                 if i in src_span:
+                #                     index_s.add(str(src_span))
+                #                     src_id.add(source_spans[sent_id].index(src_span))
+                #             for tgt_span in target_spans[sent_id]:
+                #                 if j in tgt_span:
+                #                     column_s.add(str(tgt_span))
+                #                     tgt_id.add(target_spans[sent_id].index(tgt_span))
+                #             span_scores['{}-{}'.format(i, j)].append(sim[i, j])
+                # # print(span_scores)
+                # # delete useless rows/columns of dataframe
+                # sim_df = sim_df.drop(index=list(index_s), columns=list(column_s))
+                # sim_df = sim_df.loc[:, (sim_df != 0).any(axis=0)]
+                # sim_df = sim_df[sim_df.apply(np.sum, axis=1) != 0]
+                # # delete useless rows/columns of ndarray
+                # sim = np.delete(sim, tuple(src_id), axis=0)
+                # sim = np.delete(sim, tuple(tgt_id), axis=1)
+                # src_spans = [src_spans[i] for i in range(len(src_spans)) if
+                #              i not in [int(j) for j in np.argwhere(np.all(sim[..., :] == 0, axis=1))]]
+                # tgt_spans = [tgt_spans[i] for i in range(len(tgt_spans)) if
+                #              i not in [int(j) for j in np.argwhere(np.all(sim[..., :] == 0, axis=0))]]
+                # # sim = np.delete(sim, np.argwhere(np.all(sim[..., :] == 0, axis=1)), axis=0)
+                # # sim = np.delete(sim, np.argwhere(np.all(sim[..., :] == 0, axis=0)), axis=1)
+                # # print(sim_df)
+                # combination = self.get_combs(src_spans, tgt_spans, sim_df)
+                # # print(combination)
+                # if combination is not None:
+                #     for comb in combination:
+                #         for src in comb[0]:
+                #             for tgt in comb[1]:
+                #                 # if str([src]) not in sim_df.index or str([tgt]) not in sim_df.columns or sim_df.at[str([src]), str([tgt])] > 0:
+                #                 span_scores['{}-{}'.format(src, tgt)].append(None)
+
                 aligns.append(' '.join(sorted([F"{p}" for p, vals in span_scores.items()],
                                               key=lambda x: (int(x.split('-')[0]), int(x.split('-')[1])))))
-
         return aligns
 
     def align_spans_freq(self, source_sentences, target_sentences, batch_size=100):
@@ -714,6 +800,7 @@ class Simalign:
                     aligns.append(' '.join(sorted([F"{p}" for p, vals in raw_scores.items()])))
                     # aligns.append(' '.join(sorted([F"{p}-{str(round(np.mean(vals), 3))[1:]}" for p, vals in raw_scores.items()])))
                 else:
-                    aligns.append(' '.join(sorted([F"{p}" for p, vals in b2w_scores.items()])))
+                    aligns.append(' '.join(sorted([F"{p}" for p, vals in b2w_scores.items()],
+                                                  key=lambda x: (int(x.split('-')[0]), int(x.split('-')[1])))))
                     # aligns.append(' '.join(sorted([F"{p}-{str(round(np.mean(vals), 3))[1:]}" for p, vals in b2w_scores.items()])))
         return aligns

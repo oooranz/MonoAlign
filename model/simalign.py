@@ -30,8 +30,7 @@ LOG = get_logger(__name__)
 
 class EmbeddingLoader(object):
     def __init__(self, model: str = "bert-base-multilingual-cased",
-                 device=torch.device('mps:0') if torch.backends.mps.is_available() else torch.device('cpu'),
-                 layer: int = 8):
+                 device=torch.device('mps:0'), layer: int = 8):
         TR_Models = {
             'bert-base-uncased': (BertModel, BertTokenizer),
             'bert-base-multilingual-cased': (BertModel, BertTokenizer),
@@ -84,10 +83,8 @@ class EmbeddingLoader(object):
 
 
 class Simalign:
-    def __init__(self, model: str = "bert", token_type: str = "bpe", distortion: float = 0.0,
-                 null_align: float = 1.0,
-                 matching_methods: str = "mai", device: str = "mps:0" if torch.backends.mps.is_available() else "cpu",
-                 layer: int = 8):
+    def __init__(self, model: str = "bert", token_type: str = "bpe", distortion: float = 0.0, null_align: float = 1.0,
+                 matching_methods: str = "mai", device: str = "mps:0", layer: int = 8):
         model_names = {
             "bert": "bert-base-multilingual-cased",
             "spanbert": "SpanBERT/spanbert-base-cased"
@@ -143,7 +140,7 @@ class Simalign:
 
         sim_matrix = data
         sim_matrix[sim_matrix < np.median(sim_matrix)] = 0.
-        # sim_matrix[sim_matrix < np.quantile(sim_matrix, 0.75)] = 0.
+        # sim_matrix[sim_matrix < np.quantile(sim_matrix, 0.9)] = 0.
         return sim_matrix
 
     @staticmethod
@@ -230,6 +227,24 @@ class Simalign:
                 for span_id, tgt_span in enumerate(tgt_spans):
                     if e in tgt_span:
                         sim_matrix[:, span_id] = 0.
+        return alignmatrix
+
+    @staticmethod
+    def get_alignmatrix_greedy_w2w(sim_matrix: np.ndarray, src_len: int, tgt_len: int) -> ndarray:
+        sub_sim_matrix = sim_matrix[: src_len, : tgt_len]
+        m, n = sub_sim_matrix.shape
+        alignmatrix = np.zeros((m, n))
+        while np.max(sub_sim_matrix) > 0:
+            # while np.max(new_sim_matrix) > 0:
+            x, y = np.where(sub_sim_matrix == np.max(sub_sim_matrix))
+            x, y = int(x[0]), int(y[0])
+            alignmatrix[x][y] = 1.
+            # sub_sim_matrix[x][y] = 0.
+            sub_sim_matrix[[x], :] = 0.
+            sub_sim_matrix[:, [y]] = 0.
+
+        # print(pd.DataFrame(alignmatrix))
+
         return alignmatrix
 
     @staticmethod
@@ -465,7 +480,7 @@ class Simalign:
                                       columns=[str(i) for i in tgt_spans])
                 # print(sim_df)
 
-                # Baseline1: Greedy method
+                # Baseline 1: Greedy method
                 alignment_matrix = self.get_alignmatrix_greedy(sim, src_spans, tgt_spans)
                 span_scores = collections.defaultdict(lambda: [])
                 for i in range(len(vectors[0])):
@@ -474,6 +489,15 @@ class Simalign:
                             for x in source_spans[sent_id][i]:
                                 for y in target_spans[sent_id][j]:
                                     span_scores['{}-{}'.format(x, y)].append(sim[i, j])
+
+                # # Baseline 1.1: Greedy method-w2w
+                # alignment_matrix = self.get_alignmatrix_greedy_w2w(sim, src_len, tgt_len)
+                # span_scores = collections.defaultdict(lambda: [])
+                # for i in range(src_len):
+                #     for j in range(tgt_len):
+                #         if alignment_matrix[i, j] > 0:
+                #             span_scores['{}-{}'.format(i, j)].append(sim[i, j])
+
 
                 # # Baseline2: Cover the words as much as possible
                 # forward, reverse = self.get_alignment_matrix(sim)

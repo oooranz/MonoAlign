@@ -1,0 +1,800 @@
+after the signing ceremony , president akaev and premier li peng answered the questions from reporters respectively .
+after the signing ceremonym president akaev and premier li peng answered questions of reporters .
+12-11 the - questions
+
+clinton planned to increase by 30 % the funds for the research of aids in the national public health institute .
+clinton plans to increase aids research funds for the national institute of health by 30 % .
+7-6 the - funds
+10-5 the - research
+14-7 in - for
+
+chinese enterprises have become the biggest outside investors in macao .
+china enterprises become the biggest investor in macao .
+
+"also , neither the german government nor the irish government has paid any ransom . """
+"neither the german nor irish governments paid any ransom . """
+5-5 government - governments
+7-4 the - irish
+10-6 has - paid
+
+china imported 14.447 billion american dollars of automobile products in the year 2003 , an increase of 84 percent on an annual basis , setting a record .
+china imported 14.447 billion american dollars of car products in 2003 , an annual increase of 84 % , representing a record .
+10-10 the - 2003
+11-10 year - 2003
+19-13 on - annual
+20-13 an - annual
+22-13 basis - annual
+
+at the same time an earthquake registering 4.5 on the richter scale hit the town of jasaran in the province of buir ahmad on the same day , according to iranian radio .
+at the same time an earthquake of force 4.5 shook jasaran in boyer ahmad province the same day , according to iranian radio .
+8-7 on - force
+9-7 the - force
+10-7 richter - force
+11-7 scale - force
+13-10 the - jasaran
+14-10 town - jasaran
+15-10 of - jasaran
+18-14 the - province
+
+according to marchi , human rights and social justice should be made important contents in canada 's foreign trade policy .
+human rights and social justice should become an important part of canadian foreign policy .
+11-6 made - become
+
+... and there is no distinguishing between religion and politics .
+.. and do not distinguish between religion and politics
+
+this subsidiary committee of the arab league will raise its resolution to the meeting of the atomic energy agency next september in vienna .
+this arab league committee will submit its report to a meeting of the atomic agency next september in vienna .
+4-1 the - arab
+
+it should be noted that the reservoir was built in the year 1957 with a storage capacity of 30 million cubic meters .
+the reservoir was built in 1957 with a storage capacity of 30 million cubic meters .
+10-5 the - 1957
+11-5 year - 1957
+
+it is the poor countries , however , that suffer most of all from water problems , which become aggravated under the pressures of population growth .
+but the poorest countries suffer the most from water problems , which are compounded by the pressure of population growth .
+10-5 most - the
+11-6 of - most
+12-5 all - the
+12-6 all - most
+
+due to danish government 's unfriendly policy towards immigrants , the number of foreigners taking refugees in denmark has fallen from 14,347 in 1993 to 3,500 in 2003 .
+the unfriendly attitude of danish government towards immigrants has reduced the number of refugees from 14,347 in 1993 to 3,500 in 2003 .
+4-0 's - the
+4-3 's - of
+
+"the state department spokesman boucher said : "" we are not willing to pay again for the agreements that have been reached already . """
+"state department spokesman richard boucher said , "" we wo n't pay for the already reached agreements again . """
+4-3 boucher - richard
+9-10 are - n't
+10-9 not - wo
+11-9 willing - wo
+11-10 willing - n't
+12-9 to - wo
+
+""" we do n't have medicines to treat convulsions ; we do n't even have valium or anything else for that matter . """
+""" we no longer have medicines for convulsions , nor do we have valium or anything else "" ."
+2-3 do - longer
+3-2 n't - no
+12-9 n't - nor
+
+summer in the us this year proved to be one of the hottest summers in history .
+the summer in us this year is one of the hottest in history .
+0-0 summer - the
+2-3 the - us
+7-6 to - is
+
+now it 's 15 months since hong kong returned to chinese jurisdiction , the hong kong government has been trying to remind the residents that they are chinese .
+since the reversion 15 months ago , hong kong government has been trying to remind residents that they are chinese .
+5-0 since - since
+6-1 hong - the
+6-2 hong - reversion
+7-1 kong - the
+7-2 kong - reversion
+8-1 returned - the
+9-1 to - the
+9-2 to - reversion
+10-1 chinese - the
+10-2 chinese - reversion
+11-1 jurisdiction - the
+22-15 the - residents
+
+blair had talks in jeddah with saudi officials concerning the peace process and called for a greater role to be played by the european union in this process .
+blair discussed the peace process with saudi officials in jeddah and called for a greater role of the european union .
+2-1 talks - discussed
+
+"in the presence of the resident diplomatic corps of the united arab emirates , baker added , "" we were very shy and paralyzed . """
+"baker admitted in the presence of the diplomats in the emirates "" we were shy and paralysed . """
+10-10 united - emirates
+20-14 very - shy
+
+from january to july last year , china imported a total amount of 316 million u.s. dollars worth of meat products from the united states .
+from january to july last year , china imported 316 million usd worth of meat from the usa .
+16-11 dollars - usd
+20-14 products - meat
+23-17 united - usa
+
+it should be noted that egypt is undertaking mediation efforts in an attempt to resume the palestinian / israeli negotiations .
+egypt is making mediation efforts in an attempt to restart palestinian / israeli negotiations .
+15-10 the - palestinian
+
+the u.s. economy grew only 3.3 % in the third quarter , which is lower than the 5.5 % growth in the first quarter .
+u.s. third quarter growth is 3.3 % , which is lower than the 5.5 % recorded in first quarter .
+0-0 the - u.s.
+3-3 grew - growth
+8-1 the - third
+21-17 the - first
+
+"the foreign ministers held a tripartite meeting during the "" contributions of new democracies to euro-atlantic security "" summit hosted by president peter stoyanov ."
+the three foreign ministers met during the summit on the contribution of new democracies to euro-atlantic security .
+4-4 a - met
+5-1 tripartite - three
+6-4 meeting - met
+10-9 contributions - the
+
+the general said that bilateral military cooperation is considered to be one of the means to grant advantages for both sides .
+the general said that bilateral military cooperation was one way to bring advantages to both sides .
+8-7 considered - was
+9-7 to - was
+10-7 be - was
+13-9 the - way
+
+"in the presence of accredited diplomats in the united arab emirates , baker added , "" we were very shy and paralyzed . """
+"baker admitted in the presence of the diplomats in the emirates "" we were shy and paralysed . """
+5-6 diplomats - the
+8-10 united - emirates
+
+sharon , for his part , extended his condolences to the russian president and said that is a tragedy for both countries .
+sharon expressed his condolences to the russian side and said it is a tragedy for both countries .
+
+moratenos has held talks with al-shaar ' , saturday evening .
+muratinos held talks on saturday with al shara .
+8-3 saturday - on
+
+in the center of the yuhua stone is a very clear-cut image of the map of the people 's republic of china .
+on the center of the stone is a very clear map of the people 's republic of china .
+5-5 yuhua - stone
+13-10 the - map
+
+sinai gaza , october 2 / xinhua / the palestinian leadership declared this evening its condemnation and denunciation of the operation that was carried out in eli sinai settlement north of gaza strip .
+sinai gaza october 2 / xinhua palestinian leadership denounced this evening the attack on the jewish settlement of eli sinai north of gaza strip .
+8-6 the - palestinian
+14-8 its - denounced
+15-8 condemnation - denounced
+16-8 and - denounced
+25-13 in - on
+
+he added that china hopes that there will be a return to peace as soon as possible .
+he added that china hopes that peace can resume as soon as possible .
+6-7 there - can
+8-7 be - can
+9-8 a - resume
+11-8 to - resume
+
+his recordings of the complete 23 sonatas of beethoven , were a great success in europe , granting him fame .
+all of his 23 recordings of beethoven sonatas got success and fame in europe .
+2-1 of - of
+3-0 the - all
+4-0 complete - all
+16-10 , - and
+
+the vietnamese airline announced earlier this week that it was planning to double its aircrafts to reach 70 by 2010 .
+vietnam airlines announced plans to double its fleet to 70 aircraft by 2010 earlier this week .
+0-0 the - vietnam
+17-10 70 - aircraft
+
+""" the majority of the iraqi population is also shiite . """
+"that 's the majority of the population . """
+
+it seems likely the hiring freeze in germany 's labor market will continue for months to come .
+a freeze in the german labor market is likely to continue in coming months .
+7-3 germany - the
+8-4 's - german
+11-9 will - to
+15-12 to - coming
+
+please listen to another report filed by voice of america reporter grant from jakarta .
+please listen to another report by voa reporter grant from jakarta .
+5-5 filed - by
+8-6 of - voa
+
+"a spokesman for the iranian foreign ministry , hamed reza asfa , rejected these statements made by saddam and described them as "" baseless and racist "" ."
+"hamed reza asafi , spokesman for the iranian foreign ministry , said that saddam 's statements "" are baseless and racist . """
+0-4 "a - spokesman
+7-10 , - ,
+11-3 , - ,
+15-14 made - 's
+16-14 by - 's
+
+in the university of peking , lee lan cheng visited ji sian lin , a famous chinese linguist and translator .
+in peking university , he visited ji xian lin , a famous chinese linguist and translator .
+1-1 the - peking
+1-2 the - university
+2-1 university - peking
+3-1 of - peking
+3-2 of - university
+4-2 peking - university
+6-4 lee - he
+7-4 lan - he
+
+the sanaa gathering summit was founded two years ago and includes in its membership each of sudan and ethiopia in addition to yemen .
+the sanaa gathering summit was formed two years ago and besides yemen its members include sudan and ethiopia .
+21-10 to - besides
+
+from the astronomical point of view , this asteroid was very close to the earth because the moon is only 402,000 kilometers away from the earth .
+the asteroid was very close to the earth in astronomic terms , because the moon is 402,000 kilometres off earth .
+0-8 from - in
+1-9 the - astronomic
+3-10 point - terms
+4-10 of - terms
+23-18 from - off
+24-19 the - earth
+
+he added that there is another solution which is to wait for the next monthly meeting of foreign ministers of the european union states expected on february 24 .
+he added that another solution involved waiting for the next monthly meeting of eu foreign ministers , to be held on 24 february .
+7-5 which - involved
+9-5 to - involved
+21-13 european - eu
+22-13 union - eu
+24-17 expected - to
+24-18 expected - be
+
+the rosoboron exports company , the largest arms export company in russia , has a hold on 85 % of the total exports .
+""" rozoboron exports "" , the largest russian export company , handled 85 % of the total exports ."
+0-1 the - rozoboron
+10-7 in - russian
+14-11 a - handled
+15-11 hold - handled
+16-11 on - handled
+
+yongjiang gu expressed that , economic developments in the mainland provided five great opportunities for hong kong .
+gu yongjiang said the development of mainland economy provided 5 opportunities for hong kong :
+6-3 developments - the
+8-6 the - mainland
+
+"cyprus can not remain neutral in the campaign against terrorism . """
+"cyprus is neutral in the campaign against terrorism . """
+3-1 remain - is
+
+an escaped prisoner of war said in april that as far as he knows , there are still 50-60 south korean soldiers currently jailed in north korea .
+in april , one escapee said there were still 50-60 south korean soldiers being jailed in north korea .
+
+it must be pointed out that hebron is a divided city , where around 400 israeli settlers and 120 thousand palestinians live .
+hebron is a divided city , where 400 israeli settlers and 120 thousand palestinians live .
+
+this is the first public response bush has made to the un security council meeting held today in new york .
+this was bush 's first response to today 's un security council meeting in new york .
+2-4 the - first
+8-3 made - 's
+10-9 the - un
+
+fattouh had assumed the presidency of the palestinian authority after the death of president yasser arafat in accordance with the texts of the palestinian basic law .
+fatouh took over leadership of the palestinian authority after the death of president yasser arafat in accordance with palestinian law .
+2-2 assumed - over
+3-3 the - leadership
+22-18 the - palestinian
+
+mosa 's visit , which lasts for two days , coincides with the visit of the sudanese minister of foreign affairs , mostafa osman ismayel , who arrived at tripoli on saturday .
+mossa 's one-day visit coincides with the sudanese foreign minister 's visit , who arrived tripoli today , i.e. on saturday .
+5-2 lasts - one-day
+6-2 for - one-day
+12-11 the - visit
+14-10 of - 's
+20-8 affairs - foreign
+
+in addition , ten films will be shown focusing on the beautiful traditional artworks , skills and modern life in japan .
+ten films focusing on traditional fine arts , skills and modern life in japan will be shown .
+13-5 artworks - fine
+
+he told the reporter that most of these young thugs are coming from other places out of china town after they heard that riot has broken out here .
+he told the reporter that most of the young men came to chinatown from other places after they heard news of the riots .
+15-11 out - to
+23-21 riot - the
+
+however , the inscription has been confirmed to have been carved to it later .
+the inscription was confirmed to have been carved later .
+4-2 has - was
+
+the chinese government attaches a significant importance to the development of relationships with all latin-american nations , including argentina .
+the chinese government attaches great importance to developing its ties with latin-american nations including argentina .
+4-4 a - great
+8-7 the - developing
+10-7 of - developing
+
+the valdez port , it should be noted , is one of the most important oil ports in the united states .
+the valdez port is one of the biggest oil ports in the united states .
+13-7 most - biggest
+
+the privatization of livestock husbandry in mongolia was basically completed in the 90s of last century .
+mongolia 's livestock industry was basically privatized in the 90s of last century .
+0-6 the - privatized
+2-6 of - privatized
+
+local people there have been demanding the berber language to be recognized as an official language in the constitution of algeria .
+local people called for berber language to be recognized as official language of algeria by the constitution .
+5-3 demanding - for
+6-4 the - berber
+13-10 an - official
+
+these enterprises have made a stable and important contribution to the prosperity of macao .
+they made important contribution to the prosperity and stability of macao .
+2-1 have - made
+
+"the future development will depend entirely on the attitude of the u.s. side . """
+"the future development will depend entirely on the us attitude . """
+10-8 the - us
+12-8 side - us
+
+iran and iraq had clashed in a bloody war from 1980 to 1988 , which led to the death of about one million people from both sides .
+iran and iraq clashed in a bloody war from 1980 to 1988 in which one million people from both sides died .
+3-3 had - clashed
+15-20 led - died
+16-20 to - died
+17-20 the - died
+19-20 of - died
+
+this constitutional reform will strip most of the power currently held by the president .
+the constitutional reform will dilute most of the president 's powers .
+7-10 the - powers
+10-9 held - 's
+
+in the whole year , total foreign exchange earned on exports amounted to us $ 400 million . the import amount was us $ 250 million .
+this year , export earns us $ 400 million in foreign exchange , while imports us $ 250 million .
+2-0 whole - this
+9-4 on - earns
+18-14 the - imports
+
+while lin yixing , the bar owner , was cleaning items under the bar counter and preparing to end that day 's business ,
+at the time , bar owner lin yixing was cleaning up and preparing to end business for the day .
+0-1 while - the
+0-2 while - time
+4-4 the - bar
+9-10 cleaning - up
+21-16 's - for
+
+this year , it is expected that the federal budget deficit will reach 423 billion dollars for the year .
+it is expected this year that the federal budget deficit will reach $ 423 billion .
+
+"he said : "" the israeli soldiers opened intense fire on houses in the camp and this forced the occupants of these houses to leave them . """
+"he said that "" israeli soldiers opened heavy fire on houses in the camp , forcing their inhabitants to leave . """
+4-4 the - israeli
+20-17 of - inhabitants
+21-17 these - inhabitants
+22-17 houses - inhabitants
+
+"the us government claimed these people are enemy combatants instead of war prisoners and are therefore not entitled to the protection under "" geneva convention . """
+the u.s. government called these people enemy combatants and not pows , thus they are not protected by the geneva convention .
+9-8 instead - and
+9-9 instead - not
+10-8 of - and
+11-10 war - pows
+13-11 and - ,
+17-16 entitled - protected
+18-16 to - protected
+19-16 the - protected
+23-18 geneva - the
+
+the small town of wertheim is expected to experience the highest water level in 80 years .
+the small town wertheim is expecting the highest water level in 80 years .
+3-3 of - wertheim
+7-5 to - expecting
+
+at present , palestine has over 60,000 security organization personnel , the vast majority of which come from the fatah camp .
+palestine currently has 60,000 security personnel , the vast majority of which are from the fatah camp .
+0-1 at - currently
+8-4 organization - security
+
+fatouh took over as interim palestinian authority president after president yasser arafat 's death , in accordance with the rules of the palestinian fundamental law .
+fatouh took over leadership of the palestinian authority after the death of president yasser arafat in accordance with palestinian law .
+5-5 palestinian - the
+21-18 the - palestinian
+
+the cost for each ton of seawater desalination treatment will be further reduced from the existing rmb 5 yuan .
+the cost of seawater desalinization treatment has been further reduced from 5 yuan per ton .
+
+however , he also said half jokingly that just as in 2000 , he has placed cheney in charge of finding a candidate for vice president .
+but he said half jokingly that as in 2000 he has entrusted cheney to find a vice president candidate for him .
+17-13 in - to
+18-13 charge - to
+
+"he added , "" this matter lies within the framework of the orange alert level . """
+"he added that "" this matter comes under the orange alert level . """
+
+the winner received three gold medals from the local officials in the tourism sector .
+the winner received three gold medals from the local tourism officers .
+11-9 the - tourism
+
+the passenger plane that crashed over the red sea waters belonged to egypt 's private flash airlines .
+the crashed plane in the red sea belongs to the egyptian private flash airlines .
+
+this appointment was made right before the israeli and palestinian leaders are going to hold a summit meeting on a provisional peace agreement in the united states .
+this appointment was made just before a summit meeting on a temporally peace agreement in u.s. between israeli and palestinian leaders .
+6-17 the - israeli
+24-15 the - u.s.
+25-15 united - u.s.
+26-15 states - u.s.
+
+the seven individuals were being chased in the two northern districts of the capital , maseef and taawun .
+the seven men were chased in the northern districts of maseef and taawun
+4-4 being - chased
+
+meanwhile , in london , britain and france are discussing this crisis .
+britain and france discussed the crisis in london .
+8-3 are - discussed
+
+the kindergarten is only 100 meters away from the site of the plane crash .
+the kindergarten is only 100 meters away from the crash site .
+11-9 the - crash
+12-9 plane - crash
+
+the case is still being reviewed by the jordanian courts .
+the case is still before the jordanian courts .
+4-4 being - before
+5-4 reviewed - before
+
+this year 's figure could have been even lower , if it had n't been for the strong economic performance in the first half of the year .
+if economic performance in the first half of the year is weak , this year 's figures could be even lower .
+12-10 had - is
+12-11 had - weak
+13-10 n't - is
+13-11 n't - weak
+14-10 been - is
+14-11 been - weak
+15-10 for - is
+15-11 for - weak
+16-11 the - weak
+17-10 strong - is
+
+it was arranged that she should leave washington tomorrow evening , thursday , for the hague .
+she was supposed to leave washington tomorrow , thursday , for the hague .
+
+the newspaper report pointed out the revised economic outlook has also extended the timeline for japan to get out of deflation by two years .
+the report pointed out the revised outlook also extends the timetable to end deflation by two years .
+18-12 out - end
+19-12 of - end
+
+the statement said , both of them were forced to work in a coal mine in north korea as slaves before their escape .
+the statement said they were forced to work in a coal mine in north korea before they escaped .
+4-3 both - they
+5-3 of - they
+
+on wednesday , the israeli security officials saw off arafat on the runway where arafat 's private plane was taking off for paris .
+on wednesday , the security officials saw arafat 's plane taking off the runway for paris .
+18-10 was - taking
+
+"fischer added , "" what he is saying is not of the same importance as what he had done ."
+fleischer added that ? hat he said is not as important as what he did .
+6-6 is - said
+10-9 of - as
+
+navy officials said that the case of the star shell entered the bath room after breaking through two walls .
+a navy official said the star shell hit the bathroom after going through two walls .
+0-0 navy - a
+
+"the chief of israeli domestic security services warns of the danger of "" jewish terrorism """
+"head of israel 's internal security service warns of "" jewish terrorism """
+3-3 israeli - 's
+
+the us trade and development agency has also provided a us $ 500,000 grant for the project .
+the us trade and development agency has also provided a $ 500,000 grant .
+10-10 us - $
+
+in addition , the exit polls released earlier also showed that yushchenko led yanukovych by 15 to 20 percentage points .
+the exit poll released earlier also showed that yushchenko led yanukovich by 15 to 20 percent .
+18-15 percentage - percent
+
+it should be mentioned that disneyland hong kong opened its doors to the public in september 2005 .
+hong kong disneyland opened its doors to the public in september 2005 .
+
+it was clarified that the two mummies were found in the ghor al safi region within the governate near the eastern seashore of the dead sea .
+he explained that they found the two mummies in the ghor al-safi region near the eastern coast of the dead sea .
+1-0 was - he
+7-4 were - found
+
+he explained that he will deliver the message to mubarak during their meeting on thursday .
+he said he would give mubarak the message during their meeting thursday .
+2-1 that - said
+8-4 to - give
+13-11 on - thursday
+
+"the 30-year-old rusedski said : "" i happen to be picked out and this treatment is mistaken , unfair and discriminating . """
+"30-year-old rusedski said : "" i was picked out and this is wrong , unfair and discriminating ."
+7-6 happen - was
+8-6 to - was
+14-10 treatment - this
+
+"and he said "" for this reason i say that the year 2005 is an important year in our history . """
+"he said : "" i therefore say that 2005 is an important year in our history "" ."
+4-5 for - therefore
+6-5 reason - therefore
+10-8 the - 2005
+11-8 year - 2005
+
+and blair said that american and british forces had hit 30 targets on sunday evening .
+blair said that u.s. and british forces hit 30 targets sunday night .
+
+he called for intensive talks to be held over the next few weeks .
+he called on intensive talks in the next few weeks .
+
+this version has , however , been denied by both the russians and the ukrainians .
+both the ukrainian and russian sides , however , denied this story .
+6-9 been - denied
+8-0 by - both
+11-5 russians - sides
+14-5 ukrainians - sides
+
+xinhua news agency report of april 2 from jinan - with the continuous improvement of overall performance , foreign invested enterprises have become the new area for significant growth in shandong 's national economy .
+xinhua news agency . jinan . april 2 . foreign-invested enterprises have become a significant growth point with the improvement of the overall efficiency .
+15-21 overall - the
+
+her last match was at filderstadt in germany on october 10 last year , where russia 's elena dementieva beat her .
+her last match was at filderstadt in germany on october 10 , 2002 , where she was beaten
+11-12 last - 2002
+19-17 beat - beaten
+
+when the market is closed on friday , dow jones industrial index ends at 10607.23 , up 90.09 or 0.9 % .
+the dow jones industrial closed at 10,607.23 on friday , up 90.09 or 0.9 % .
+7-9 , - ,
+8-0 dow - the
+
+mr. min said , after the riot in may , he and his neighbors made this barbed-wire barricade but they never expected that they would have to make use of it so soon .
+mr. min said his neighbors made the barbed wire after the riot in may but they did n't expect to use it so soon .
+20-16 never - did
+27-20 make - use
+29-20 of - use
+
+he was sure that canada and china could be very good co-operation partners .
+he thought canada and china could become very good partners .
+1-1 was - thought
+2-1 sure - thought
+11-9 co-operation - partners
+
+sinai gaza , october 2nd / chinkhwa / the palestinian leadership announced this evening its condemnation of the operation that was carried out in the eli sinai settlement north of the gaza strip .
+sinai gaza october 2 / xinhua palestinian leadership denounced this evening the attack on the jewish settlement of eli sinai north of gaza strip .
+8-6 the - palestinian
+16-8 of - denounced
+23-13 in - on
+30-22 the - gaza
+
+on february 24 president bush announced in the white house that he will support the constitutional amendment on prohibition of homosexual marriage .
+on february 24 , president bush announced that he would support a constitution amendment of banning homosexual marriage .
+
+he stated that the visit paid by premier li peng will promote the peace , security , and stability of the central asia region .
+he says that premier li peng 's visit will promote the central asia 's peace , security and stability .
+3-7 the - visit
+5-6 paid - 's
+12-14 the - peace
+19-13 of - 's
+23-12 region - asia
+
+it is expected that tomorrow , monday , santer will go to the palestinian territories to hold a meeting with the chairman of the palestinian national authority , yasser arafat.1
+it is expected that santer will head to the palestinian territories on monday to meet with the palestinian authority 's president , yasser arafat .
+6-11 monday - on
+10-7 go - to
+11-6 to - head
+17-14 a - meet
+20-20 the - president
+23-16 the - the
+25-18 national - authority
+
+"i have too many things waiting for me to do that i ca n't do at the moment . """
+"i have too many things waiting for me that i can not do now . """
+12-10 ca - can
+15-13 at - now
+16-13 the - now
+
+those smaller-scale enterprises will be managed by the local governments .
+local governments will manage the smaller enterprises .
+0-4 those - the
+4-3 be - manage
+6-3 by - manage
+7-0 the - local
+
+the survey was conducted by the social sciences research center of university of hong kong .
+made by the social science research center of hong kong university .
+3-0 conducted - made
+11-8 university - hong
+11-9 university - kong
+12-8 of - hong
+12-9 of - kong
+12-10 of - university
+13-9 hong - kong
+13-10 hong - university
+14-8 kong - hong
+14-10 kong - university
+
+for the sake of economic interests of the local immigrants and australia , the british immigrtants association appealed to the government to face this issue seriously .
+the british immigrants association urged the government to face this problem for the sake of local immigrants and the australian economy .
+5-20 interests - economy
+7-15 the - local
+11-18 australia - the
+18-4 to - urged
+
+"he added that , "" every role played in this battle is important ."
+he added , every role in this battle is important .
+7-5 played - in
+
+north korea did not participate in the 19th winter olympic games held in salt lake city , in the united states .
+north korea did not participate in the 19th winter olympics held in salt lake city , usa .
+18-16 the - usa
+19-16 united - usa
+20-16 states - usa
+
+"twenty to thirty million of people will live in the reclaimed areas in the next century , "" china daily "" said ."
+""" china daily "" said that 20 or 30 million people will live in these areas next century ."
+
+secondly , it aims to improve the image of the usa .
+second is to improve the us image .
+3-1 aims - is
+9-5 the - us
+
+he made it clear that he would hand over the message to mubarak during their meeting on thursday .
+he said he would give mubarak the message during their meeting thursday .
+2-1 it - said
+3-1 clear - said
+4-1 that - said
+8-4 over - give
+11-4 to - give
+16-11 on - thursday
+
+from january to july last year , china imported a total amount of 316 million u.s. dollars worth of meat products from the united states .
+during january to july last year , china imported us $ 316 million of meat products from the united states .
+15-9 u.s. - us
+
+this attack brought up the death toll of palestinians to 1,562 since they launched an uprising in september of two years ago .
+this attack took the death toll to 1,562 since palestinians ' uprising in september two years ago .
+3-2 up - took
+12-9 they - palestinians
+
+after the signing ceremony , president akaev and premier li peng have answered questions from the correspondents separately .
+after the signing ceremonym president akaev and premier li peng answered questions of reporters .
+11-10 have - answered
+15-13 the - reporters
+
+moussa 's one-day visit coincides with the visit by the sudanese foreign minister , mustafa osman ismail , who arrived today , saturday , in tripoli .
+mossa 's one-day visit coincides with the sudanese foreign minister 's visit , who arrived tripoli today , i.e. on saturday .
+6-11 the - visit
+8-10 by - 's
+22-19 saturday - on
+24-15 in - tripoli
+
+this is the first time for the olympic delegations of both north and south korea to march together into the winter olympic games stadium while holding hands .
+this was the first time that the south and north korean olympic delegations had ever marched in together at the winter olympics .
+11-9 north - north
+13-7 south - south
+18-18 into - at
+
+the amount of the electricity transferred to quangdong will reach 36.4 billion kilowatts during this year , with an increase of 46.7 percent on an annual basis .
+the volume of electricity transferred to quangdong will reach 36.4 billion kilowatts , an annual increase of 46.7 %
+3-3 the - electricity
+23-14 on - annual
+24-14 an - annual
+26-14 basis - annual
+
+clinton planned to increase the aids research funds with 30 percent for the national health research institute .
+clinton planned to increase 30 % aids research funds to national health research institute .
+4-6 the - aids
+12-10 the - national
+
+and blair said that american and british forces had hit 30 targets on sunday evening .
+american and british forces hit 30 targets sunday night , blair said .
+8-4 had - hit
+
+he added that it had been brought down in the western province of farah in the country .
+he added that it came down in the western farah province of the country .
+4-4 had - came
+5-4 been - came
+12-9 of - farah
+
+for the israeli fighters hovered yesterday and the day before yesterday over the middle and eastern parts of lebanon .
+the israeli planes flew yesterday and the day before yesterday over central and eastern lebanon .
+12-11 the - central
+16-14 parts - lebanon
+17-14 of - lebanon
+
+the total investments for the project , which is the first industrial garden for communications and information in china , are more than a billion us dollars .
+total investment for the project , which is the first information and communications park in china exceeds one billion us dollars .
+11-13 industrial - park
+
+shimon peres has taken oath as the new president of israel .
+simon peres takes oath as president of israel
+2-2 has - takes
+
+it was circulated that wong is the sister of robert ching , the owner of a company that manufactures plastic furniture and rubber sponge products .
+wong is the sister of robert cheng , owner of a company that manufactures plastic furniture and rubber foam products .
+12-8 the - owner
+
+these measures to benefit the people have already been extended to more than 12,000 migrant peasant workers .
+this measure to benefit people has already benefitted over 12,000 rural migrant workers .
+4-4 the - people
+9-7 extended - benefitted
+10-7 to - benefitted
+
+"other officials said that the new people 's army had strengthened attacks against the so-called "" soft "" targets , for example , the telecommunication and power facilities ."
+"other officials said that the npa has intensified attacks on the so-called "" soft "" targets such as telecommunications and power facilities ."
+6-5 people - npa
+7-5 's - npa
+20-17 for - as
+21-16 example - such
+23-18 the - telecommunications
+
+it is pointed out that bahrain hosts the headquarters of the american fifth fleet command .
+bahrain is known to host the headquarters of the american fifth fleet .
+0-1 it - is
+0-2 it - known
+0-3 it - to
+1-2 is - known
+1-3 is - to
+2-1 pointed - is
+2-2 pointed - known
+2-3 pointed - to
+3-1 out - is
+3-3 out - to
+4-1 that - is
+4-2 that - known
+
+paraguay exports about 60 thousand tons of beef each year and most of the export go to countries like brazil and chile etc .
+each year , paraguay exports about 60,000 tons of beef , mainly to countries such as brazil and chile .
+12-11 of - mainly
+
+- further enhancing the development of hong kong 's financial market .
+- further promote the development of hk financial market .
+6-6 hong - hk
+7-6 kong - hk
+
+china issues a polar-region exploration report for the first time
+china issues its first polar exploration report
+6-3 for - first
+7-3 the - first
+9-3 time - first
+
+he said in a cbc interview that he would seriously consider any u.s. requests for providing military assistance in areas outside afghanistan .
+he told cbs that he will seriously consider any us request for military assistance in areas outside afghanistan .
+3-1 a - told
+5-1 interview - told
+
+human rights and social justice should become one of the important contents of canadian foreign affairs policy .
+human rights and social justice should become an important part of canadian foreign policy .
+8-7 of - an
+9-7 the - an
+
+15 months have now passed since hong kong returned to china . the hong kong government has been trying to remind the residents there that they are chinese .
+since the reversion 15 months ago , hong kong government has been trying to remind residents that they are chinese .
+2-5 have - ago
+3-5 now - ago
+9-2 to - reversion
+10-2 china - reversion
+12-7 the - hong
+21-15 the - residents
+
+this is the third time since may , 2000 that the security council has sent delegations to visit african great lakes region .
+this is the third security council delegation to africa 's great lake region since may 2000 .
+10-4 the - security
+
+the dead and the injured are all passengers from the bus .
+all dead and injured are passengers of the bus .
+3-3 the - injured
+6-0 all - all
+
+approval of draft law pertaining to funding political parties in tunisia
+draft law on funding political parties in tunisia approved
+1-8 of - approved
+4-2 pertaining - on
+5-2 to - on
+
+france 's foreign minister released the above statement at the meeting of the foreign affairs committee of the french national congress yesterday .
+french foreign minister made the above statement yesterday on french parliament of foreign affairs committee .
+9-9 the - french
+9-10 the - parliament
+10-9 meeting - french
+11-11 of - of
+16-9 of - french
+17-9 the - french
+19-10 national - parliament
+20-10 congress - parliament
+
+last year , president fox made 15 visits to foreign countries .
+last year , president fox made 15 foreign trips .
+10-7 countries - foreign
+

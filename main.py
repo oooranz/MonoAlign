@@ -3,11 +3,15 @@ import codecs
 import argparse
 import model
 from utils import get_logger
+from fuzzywuzzy import fuzz
+import csv
+import pandas as pd
+from collections import Counter
 
 LOG = get_logger(__name__)
 
 
-def read_mono_dataset(file_name, sure_and_possible=False, transpose=False):
+def read_mono_dataset(file_name, sure_and_possible=False):
     LOG.info('Reading %s' % file_name)
     data = []
     f = codecs.open(file_name, 'r', 'utf-8')
@@ -19,23 +23,15 @@ def read_mono_dataset(file_name, sure_and_possible=False, transpose=False):
     target_sentences = []
     alignment_list = []
     for i in range(len(data)):
-        if transpose:
-            source = data[i]['target']
-            target = data[i]['source']
-        else:
-            source = data[i]['source']
-            target = data[i]['target']
+        source = data[i]['source']
+        target = data[i]['target']
         alignment = data[i]['sureAlign']
-
         if sure_and_possible:
             alignment += ' ' + data[i]['possibleAlign']
         my_label = []
-        for item in alignment.split():  # reverse the alignment
+        for item in alignment.split():
             i, j = item.split('-')
-            if transpose:
-                my_label.append(str(j) + '-' + str(i))
-            else:
-                my_label.append(str(i) + '-' + str(j))
+            my_label.append(str(i) + '-' + str(j))
         alignment = ' '.join(my_label)
 
         source_sentences.append(source)
@@ -50,18 +46,20 @@ def align_mono_file(data_set, model_name):
         aligner = model.Simalign(matching_methods='a')
     elif model_name == 'simalign-itermax':
         aligner = model.Simalign(matching_methods='i')
-    elif model_name == 'spanbert':
-        aligner = model.Simalign(model='SpanBERT/spanbert-base-cased', matching_methods='a')
+    elif model_name == 'spanbert-greedy':
+        aligner = model.Simalign(model='spanbert', matching_methods='a')
+    elif model_name == 'mbert-greedy':
+        aligner = model.Simalign(matching_methods='a')
 
     # Dataset
     if data_set == 'MTReference':
-        test_set = read_mono_dataset('MultiMWA-data/MultiMWA-MTRef/mtref-test.tsv', True, False)
+        test_set = read_mono_dataset('MultiMWA-data/MultiMWA-MTRef/mtref-test.tsv', True)
     elif data_set == 'Wikipedia':
-        test_set = read_mono_dataset('MultiMWA-data/MultiMWA-Wiki/wiki-test.tsv', True, False)
+        test_set = read_mono_dataset('MultiMWA-data/MultiMWA-Wiki/wiki-test.tsv', True)
     elif data_set == 'Newsela':
-        test_set = read_mono_dataset('MultiMWA-data/MultiMWA-Newsela/newsela-test.tsv', True, False)
+        test_set = read_mono_dataset('MultiMWA-data/MultiMWA-Newsela/newsela-test.tsv', True)
     elif data_set == 'arXiv':
-        test_set = read_mono_dataset('MultiMWA-data/MultiMWA-arXiv/arxiv-test.tsv', True, False)
+        test_set = read_mono_dataset('MultiMWA-data/MultiMWA-arXiv/arxiv-test.tsv', True)
 
     # Read data
     source_sentences = test_set[0]
@@ -69,7 +67,7 @@ def align_mono_file(data_set, model_name):
     gs = test_set[2]
 
     # Word Alignment
-    aligns = aligner.align_spans_iter(source_sentences, target_sentences)
+    aligns = aligner.align_sentences(source_sentences, target_sentences)
 
     # Evaluation
     pred_num, gold_num, correct_num_p, correct_num_r, em_num = 0, 0, 0, 0, []
@@ -105,4 +103,4 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     align_mono_file(args.dataset, args.model)
-    # align_mono_file('Newsela', 'simalign-argmax')
+    # align_mono_file('MTReference', 'simalign-argmax')

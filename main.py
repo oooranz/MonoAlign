@@ -3,10 +3,6 @@ import codecs
 import argparse
 import model
 from utils import get_logger
-from fuzzywuzzy import fuzz
-import csv
-import pandas as pd
-from collections import Counter
 
 LOG = get_logger(__name__)
 
